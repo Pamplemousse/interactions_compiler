@@ -1,5 +1,6 @@
 use std::io;
 
+mod code_generator;
 mod interaction_event;
 use interaction_event::InteractionEvent;
 
