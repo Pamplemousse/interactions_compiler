@@ -10,12 +10,26 @@ After recording user interactions in a webpage, generate a script to drive a pro
 
 ```
 cat <<__EOF__ > test.json
-{
-  "michel": {
-    "age": 42,
-    "hobbies": ["peeling potatoes"]
+[ { "topic": "dom-events"
+  , "element":
+    { "nodeName": "DIV"
+    , "className": "class1 class2"
+    , "id": "an-id"
+    }
+  , "event": "click"
+  , "timestamp": 1586991500209
   }
-}
+, { "topic": "dom-events"
+  , "element":
+    { "nodeName": "INPUT"
+    , "className": "class3 class4"
+    , "id": "email"
+    }
+  , "event": "keydown"
+  , "timestamp": 1586991504673
+  }
+]
 __EOF__
+
 cat test.json | cargo run
 ```
