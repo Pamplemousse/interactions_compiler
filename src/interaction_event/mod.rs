@@ -62,7 +62,7 @@ mod tests {
                 let dom_element = interaction.element;
                 let event = interaction.event;
 
-                assert_eq!(dom_element.classes, ["class1", "class2"].to_vec());
+                assert_eq!(dom_element.classes, vec!["class1", "class2"]);
                 assert_eq!(dom_element.id, "an-id");
                 assert_eq!(dom_element.tag, Tag::DIV);
                 assert_eq!(event, DomEvent::CLICK);

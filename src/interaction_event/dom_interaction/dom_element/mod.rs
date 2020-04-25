@@ -43,7 +43,7 @@ mod tests {
 
         let dom_element: DomElement = serde_json::from_str(dom_element_as_json).unwrap();
 
-        assert_eq!(dom_element.classes, ["class1", "class2"].to_vec());
+        assert_eq!(dom_element.classes, vec!["class1", "class2"]);
         assert_eq!(dom_element.id, "an-id");
         assert_eq!(dom_element.tag, Tag::DIV);
     }
