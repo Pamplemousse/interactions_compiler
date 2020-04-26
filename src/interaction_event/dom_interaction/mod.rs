@@ -35,7 +35,7 @@ mod tests {
 
         assert_eq!(dom_interaction.element.classes, vec!["class1", "class2"]);
         assert_eq!(dom_interaction.element.id, "an-id");
-        assert_eq!(dom_interaction.element.tag, dom_element::tag::Tag::DIV);
+        assert_eq!(dom_interaction.element.tag, crate::html::Tag::DIV);
         assert_eq!(dom_interaction.event, dom_event::DomEvent::CLICK);
     }
 }

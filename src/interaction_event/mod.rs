@@ -37,7 +37,7 @@ impl Display for Interaction {
 mod tests {
     use super::*;
 
-    use dom_interaction::dom_element::tag::Tag;
+    use crate::html::Tag;
     use dom_interaction::dom_event::DomEvent;
 
     #[test]

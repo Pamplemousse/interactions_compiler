@@ -1,10 +1,8 @@
 use std::fmt::{Debug};
 
-use serde::Deserialize;
-use serde::Deserializer;
+use serde::{Deserialize, Deserializer};
 
-pub mod tag;
-use tag::Tag;
+use crate::html::tag::Tag;
 
 
 #[derive(Debug, Deserialize)]
