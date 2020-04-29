@@ -2,10 +2,12 @@ use serde::Serialize;
 
 pub mod action_print;
 pub mod client_element_click;
+pub mod client_element_send_keys;
 pub mod client_launch;
 pub mod selector;
 use action_print::ActionPrintStatement;
 use client_element_click::ClientElementClickStatement;
+use client_element_send_keys::ClientElementSendKeysStatement;
 use client_launch::ClientLaunchStatement;
 
 
@@ -18,6 +20,8 @@ pub enum Statement {
     ClientLaunch(ClientLaunchStatement),
     #[serde(rename="ZestClientElementClick")]
     ClientElementClick(ClientElementClickStatement),
+    #[serde(rename="ZestClientElementSendKeys")]
+    ClientElementSendKeys(ClientElementSendKeysStatement),
 }
 
 
@@ -62,6 +66,28 @@ mod tests {
 
         let generated_statement = &(serde_json::to_string(&statement).unwrap());
         let expected_result = r#"{ "elementType": "ZestClientElementClick" }"#;
+
+        assert_json_include!(
+            actual: serde_json::from_str(generated_statement).unwrap(),
+            expected: serde_json::from_str(expected_result).unwrap()
+        );
+    }
+
+    #[test]
+    fn serialize_a_client_element_send_keys_statement_representation_with_the_right_element_type() {
+        let statement :Statement = Statement::ClientElementSendKeys(ClientElementSendKeysStatement {
+            index: 1,
+            selector: Selector::CssSelector(CssSelector {
+                classes: vec!["class1".to_string(), "class2".to_string()],
+                id: "an-id".to_string(),
+                tag: Tag::INPUT,
+            }),
+            value: "value-to-send".to_string(),
+            window_handle: "a-handle".to_string(),
+        });
+
+        let generated_statement = &(serde_json::to_string(&statement).unwrap());
+        let expected_result = r#"{ "elementType": "ZestClientElementSendKeys" }"#;
 
         assert_json_include!(
             actual: serde_json::from_str(generated_statement).unwrap(),
