@@ -3,6 +3,7 @@ use serde::Serialize;
 pub mod action_print;
 pub mod client_element_click;
 pub mod client_launch;
+pub mod selector;
 use action_print::ActionPrintStatement;
 use client_element_click::ClientElementClickStatement;
 use client_launch::ClientLaunchStatement;
@@ -27,9 +28,9 @@ mod tests {
     use assert_json_diff::assert_json_include;
 
     use crate::html::Tag;
-    use client_element_click::Selector;
-    use client_element_click::css_selector::CssSelector;
     use client_launch::BrowserType;
+    use selector::Selector;
+    use selector::css_selector::CssSelector;
 
     #[test]
     fn serialize_an_action_print_statement_representation_with_the_right_element_type() {

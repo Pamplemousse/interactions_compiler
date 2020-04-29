@@ -1,8 +1,6 @@
 use serde::Serialize;
 
-pub mod css_selector;
-use crate::html::Tag;
-use css_selector::CssSelector;
+use crate::code_generator::zest::statement::selector::Selector;
 
 
 #[derive(Clone, Serialize)]
@@ -14,19 +12,15 @@ pub struct ClientElementClickStatement {
     pub window_handle: String,
 }
 
-#[derive(Clone, Serialize)]
-#[serde(rename_all="camelCase")]
-#[serde(tag="type")]
-pub enum Selector {
-    CssSelector(CssSelector),
-}
-
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
     use assert_json_diff::assert_json_eq;
+
+    use crate::code_generator::zest::statement::selector::css_selector::CssSelector;
+    use crate::html::Tag;
 
     #[test]
     fn serialize_a_client_element_click_statement_representation_properly() {
