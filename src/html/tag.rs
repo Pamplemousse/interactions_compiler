@@ -1,10 +1,9 @@
 use std::fmt::{Debug, Display, Formatter, Error};
 
-use serde;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 
-#[derive(Deserialize, PartialEq)]
+#[derive(Clone, Deserialize, PartialEq, Serialize)]
 pub enum Tag {
     BUTTON,
     DIV,

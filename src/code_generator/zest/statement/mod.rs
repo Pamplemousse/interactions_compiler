@@ -1,8 +1,10 @@
 use serde::Serialize;
 
 pub mod action_print;
+pub mod client_element_click;
 pub mod client_launch;
 use action_print::ActionPrintStatement;
+use client_element_click::ClientElementClickStatement;
 use client_launch::ClientLaunchStatement;
 
 
@@ -13,6 +15,8 @@ pub enum Statement {
     ActionPrint(ActionPrintStatement),
     #[serde(rename="ZestClientLaunch")]
     ClientLaunch(ClientLaunchStatement),
+    #[serde(rename="ZestClientElementClick")]
+    ClientElementClick(ClientElementClickStatement),
 }
 
 
@@ -22,6 +26,9 @@ mod tests {
 
     use assert_json_diff::assert_json_include;
 
+    use crate::html::Tag;
+    use client_element_click::Selector;
+    use client_element_click::css_selector::CssSelector;
     use client_launch::BrowserType;
 
     #[test]
@@ -33,6 +40,27 @@ mod tests {
 
         let generated_statement = &(serde_json::to_string(&statement).unwrap());
         let expected_result = r#"{ "elementType": "ZestActionPrint" }"#;
+
+        assert_json_include!(
+            actual: serde_json::from_str(generated_statement).unwrap(),
+            expected: serde_json::from_str(expected_result).unwrap()
+        );
+    }
+
+    #[test]
+    fn serialize_a_client_element_click_statement_representation_with_the_right_element_type() {
+        let statement :Statement = Statement::ClientElementClick(ClientElementClickStatement {
+            index: 1,
+            selector: Selector::CssSelector(CssSelector {
+                classes: vec!["class1".to_string(), "class2".to_string()],
+                id: "an-id".to_string(),
+                tag: Tag::DIV,
+            }),
+            window_handle: "a-handle".to_string(),
+        });
+
+        let generated_statement = &(serde_json::to_string(&statement).unwrap());
+        let expected_result = r#"{ "elementType": "ZestClientElementClick" }"#;
 
         assert_json_include!(
             actual: serde_json::from_str(generated_statement).unwrap(),
