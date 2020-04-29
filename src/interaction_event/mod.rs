@@ -2,7 +2,7 @@ use std::fmt::{Debug, Display, Formatter, Error};
 
 use serde::Deserialize;
 
-mod dom_interaction;
+pub mod dom_interaction;
 use dom_interaction::DomInteraction;
 
 

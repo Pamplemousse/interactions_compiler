@@ -4,7 +4,7 @@ use serde::Deserialize;
 
 pub mod dom_element;
 pub mod dom_event;
-use dom_element::DomElement;
+pub use dom_element::DomElement;
 use dom_event::DomEvent;
 
 
