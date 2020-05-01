@@ -28,6 +28,18 @@ pub enum Statement {
     ClientWindowClose(ClientWindowCloseStatement),
 }
 
+impl Statement {
+    pub fn window_handle(&self) -> Option<String> {
+        match *self {
+            Statement::ClientLaunch(ref statement) => Some(statement.window_handle.clone()),
+            Statement::ClientElementClick(ref statement) => Some(statement.window_handle.clone()),
+            Statement::ClientElementSendKeys(ref statement) => Some(statement.window_handle.clone()),
+            Statement::ClientWindowClose(ref statement) => Some(statement.window_handle.clone()),
+            _ => None,
+        }
+    }
+}
+
 
 #[cfg(test)]
 mod tests {
@@ -135,5 +147,61 @@ mod tests {
             actual: serde_json::from_str(generated_statement).unwrap(),
             expected: serde_json::from_str(expected_result).unwrap()
         );
+    }
+
+    #[test]
+    fn window_handle_for_an_action_print_returns_none() {
+        let statement :Statement = Statement::ActionPrint(ActionPrintStatement {
+            enabled: true,
+            message: "Hello!".to_string(),
+        });
+
+        assert_eq!(statement.window_handle(), None);
+    }
+
+    #[test]
+    fn window_handle_for_a_client_element_click_returns_it() {
+        let statement :Statement = Statement::ClientElementClick(ClientElementClickStatement {
+            index: 1,
+            selector: Selector::CssSelector(CssSelector {
+                classes: vec!["class1".to_string(), "class2".to_string()],
+                id: "an-id".to_string(),
+                tag: Tag::DIV,
+            }),
+            window_handle: "a-handle".to_string(),
+        });
+
+        let expected_handle = Some("a-handle".to_string());
+        assert_eq!(statement.window_handle(), expected_handle);
+    }
+
+    #[test]
+    fn window_handle_for_a_client_element_send_keys_returns_it() {
+        let statement :Statement = Statement::ClientElementSendKeys(ClientElementSendKeysStatement {
+            index: 1,
+            selector: Selector::CssSelector(CssSelector {
+                classes: vec!["class1".to_string(), "class2".to_string()],
+                id: "an-id".to_string(),
+                tag: Tag::DIV,
+            }),
+            value: "value-to-send".to_string(),
+            window_handle: "a-handle".to_string(),
+        });
+
+        let expected_handle = Some("a-handle".to_string());
+        assert_eq!(statement.window_handle(), expected_handle);
+    }
+
+    #[test]
+    fn window_handle_for_a_window_close_returns_it() {
+        let statement :Statement = Statement::ClientWindowClose(ClientWindowCloseStatement {
+            enabled: true,
+            index: 100,
+            sleep_in_seconds: 0,
+            window_handle: "a-handle".to_string(),
+        });
+
+        let expected_handle = Some("a-handle".to_string());
+        assert_eq!(statement.window_handle(), expected_handle);
     }
 }
