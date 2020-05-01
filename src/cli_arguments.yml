@@ -1,0 +1,10 @@
+# Require a `name` as per https://github.com/clap-rs/clap/issues/1338 .
+name: ""
+args:
+    - url:
+        help: The URL of the website the trace has been recorded on.
+        short: u
+        long: url
+        value_name: URL
+        required: true
+        takes_value: true

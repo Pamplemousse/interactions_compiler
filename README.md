@@ -31,5 +31,5 @@ cat <<__EOF__ > test.json
 ]
 __EOF__
 
-cat test.json | cargo run
+test.json | cargo run -- -u https://website.com
 ```
