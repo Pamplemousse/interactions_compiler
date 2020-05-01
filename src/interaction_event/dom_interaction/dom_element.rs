@@ -13,6 +13,7 @@ pub struct DomElement {
     pub id: String,
     #[serde(alias="nodeName")]
     pub tag: Tag,
+    pub value: Option<String>,
 }
 
 fn deserialize_classes<'de, D>(deserializer: D) -> Result<Vec<String>, D::Error>
@@ -31,7 +32,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn deserializes_an_element_properly() {
+    fn deserializes_an_element_without_value_properly() {
         let dom_element_as_json = r#"
             { "nodeName": "DIV"
             , "className": "class1 class2"
@@ -44,5 +45,23 @@ mod tests {
         assert_eq!(dom_element.classes, vec!["class1", "class2"]);
         assert_eq!(dom_element.id, "an-id");
         assert_eq!(dom_element.tag, Tag::DIV);
+    }
+
+    #[test]
+    fn deserializes_an_element_with_value_properly() {
+        let dom_element_as_json = r#"
+            { "nodeName": "DIV"
+            , "className": "class1 class2"
+            , "id": "an-id"
+            , "value": "a-value"
+            }
+        "#;
+
+        let dom_element: DomElement = serde_json::from_str(dom_element_as_json).unwrap();
+
+        assert_eq!(dom_element.classes, vec!["class1", "class2"]);
+        assert_eq!(dom_element.id, "an-id");
+        assert_eq!(dom_element.tag, Tag::DIV);
+        assert_eq!(dom_element.value.unwrap(), "a-value".to_string());
     }
 }

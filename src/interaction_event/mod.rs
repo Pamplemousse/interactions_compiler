@@ -48,8 +48,9 @@ mod tests {
                 { "nodeName": "DIV"
                 , "className": "class1 class2"
                 , "id": "an-id"
+                , "value": "a-value"
                 }
-            , "event": "click"
+            , "event": "input"
             , "timestamp": 1586991500209
             }
         "#;
@@ -65,7 +66,8 @@ mod tests {
                 assert_eq!(dom_element.classes, vec!["class1", "class2"]);
                 assert_eq!(dom_element.id, "an-id");
                 assert_eq!(dom_element.tag, Tag::DIV);
-                assert_eq!(event, DomEvent::CLICK);
+                assert_eq!(dom_element.value.unwrap(), "a-value".to_string());
+                assert_eq!(event, DomEvent::INPUT);
                 assert_eq!(timestamp, 1586991500209);
             }
         }

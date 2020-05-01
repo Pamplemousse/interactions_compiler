@@ -70,6 +70,7 @@ mod tests {
             classes: vec!["class1".to_string(), "class2".to_string()],
             id: "an-id".to_string(),
             tag: Tag::DIV,
+            value: None,
         };
         let css_selector = CssSelector {
             classes: vec!["class1".to_string(), "class2".to_string()],

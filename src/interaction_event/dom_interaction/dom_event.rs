@@ -8,6 +8,8 @@ use serde::Deserialize;
 pub enum DomEvent {
     CLICK,
     KEYDOWN,
+    KEYUP,
+    INPUT,
 }
 
 impl Debug for DomEvent {
@@ -15,6 +17,8 @@ impl Debug for DomEvent {
         match *self {
             DomEvent::CLICK => write!(f, "click"),
             DomEvent::KEYDOWN => write!(f, "keydown"),
+            DomEvent::KEYUP => write!(f, "keyup"),
+            DomEvent::INPUT => write!(f, "input"),
         }
     }
 }
@@ -44,5 +48,21 @@ mod tests {
         let event: DomEvent = serde_json::from_str(event_as_json).unwrap();
 
         assert_eq!(event, DomEvent::KEYDOWN);
+    }
+
+    #[test]
+    fn deserializes_keyup_properly() {
+        let event_as_json = "\"keyup\"";
+        let event: DomEvent = serde_json::from_str(event_as_json).unwrap();
+
+        assert_eq!(event, DomEvent::KEYUP);
+    }
+
+    #[test]
+    fn deserializes_input_properly() {
+        let event_as_json = "\"input\"";
+        let event: DomEvent = serde_json::from_str(event_as_json).unwrap();
+
+        assert_eq!(event, DomEvent::INPUT);
     }
 }
