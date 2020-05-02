@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Debug, Serialize, PartialEq)]
 #[serde(rename_all="camelCase")]
 pub struct ActionPrintStatement {
     pub enabled: bool,

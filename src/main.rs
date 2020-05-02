@@ -6,9 +6,10 @@ mod code_generator;
 mod html;
 mod interaction_event;
 use interaction_event::InteractionEvent;
+use code_generator::generate_zest_code_from;
 
 
-fn main() {
+fn main() -> Result<(), io::Error> {
     let yaml = load_yaml!("cli_arguments.yml");
     let matches = App::from_yaml(yaml)
         .about(crate_description!())
@@ -24,14 +25,10 @@ fn main() {
 
     let stdin = io::stdin();
 
-    let interaction_events: Vec<InteractionEvent> =
-        serde_json::from_reader(stdin).expect("JSON was not well-formatted");
+    let interaction_events: &Vec<InteractionEvent> =
+        &serde_json::from_reader(stdin).expect("JSON was not well-formatted");
 
-    for event in interaction_events {
-        println!(
-            "interaction: {}, at {}",
-            event.interaction,
-            event.timestamp
-        );
-    }
+    println!("{}", generate_zest_code_from(interaction_events, url)?);
+
+    Ok(())
 }

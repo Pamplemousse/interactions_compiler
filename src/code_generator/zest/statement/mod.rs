@@ -6,14 +6,19 @@ pub mod client_element_send_keys;
 pub mod client_launch;
 pub mod client_window_close;
 pub mod selector;
+use crate::interaction_event::{Interaction, InteractionEvent};
+use crate::interaction_event::dom_interaction::DomInteraction;
+use crate::interaction_event::dom_interaction::dom_event::DomEvent;
 use action_print::ActionPrintStatement;
 use client_element_click::ClientElementClickStatement;
 use client_element_send_keys::ClientElementSendKeysStatement;
 use client_launch::ClientLaunchStatement;
 use client_window_close::ClientWindowCloseStatement;
+use selector::Selector;
+use selector::css_selector::CssSelector;
 
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(tag="elementType")]
 pub enum Statement {
     #[serde(rename="ZestActionPrint")]
@@ -29,6 +34,39 @@ pub enum Statement {
 }
 
 impl Statement {
+    pub fn from_interaction_event(interaction_event: &InteractionEvent, index: usize, window_handle: String) -> Option<Statement> {
+        match &interaction_event.interaction {
+            Interaction::DomInteraction(interaction) => {
+                Statement::from_dom_interaction(interaction, index, window_handle)
+            },
+        }
+    }
+
+    fn from_dom_interaction(interaction: &DomInteraction, index: usize, window_handle: String) -> Option<Statement> {
+        match &interaction.event {
+            DomEvent::CLICK => {
+                Some(Statement::ClientElementClick(ClientElementClickStatement {
+                    index,
+                    selector: Selector::CssSelector(
+                        CssSelector::from(&interaction.element)
+                    ),
+                    window_handle,
+                }))
+            },
+            DomEvent::INPUT => {
+                Some(Statement::ClientElementSendKeys(ClientElementSendKeysStatement {
+                    index,
+                    selector: Selector::CssSelector(
+                        CssSelector::from(&interaction.element)
+                    ),
+                    value: interaction.element.value.as_ref().unwrap().to_string(),
+                    window_handle,
+                }))
+            },
+            _ => None,
+        }
+    }
+
     pub fn window_handle(&self) -> Option<String> {
         match *self {
             Statement::ClientLaunch(ref statement) => Some(statement.window_handle.clone()),
