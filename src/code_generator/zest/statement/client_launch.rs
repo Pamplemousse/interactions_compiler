@@ -1,4 +1,5 @@
 use serde::Serialize;
+use uuid::Uuid;
 
 
 #[derive(Clone, Serialize)]
@@ -12,10 +13,25 @@ pub struct ClientLaunchStatement {
     pub window_handle: String,
 }
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Debug, Serialize, PartialEq)]
 #[serde(rename_all="lowercase")]
 pub enum BrowserType {
     Firefox
+}
+
+impl ClientLaunchStatement {
+    pub fn from_url(url: String) -> Self {
+        let window_handle = Uuid::new_v4().to_hyphenated().to_string();
+
+        Self {
+            browser_type: BrowserType::Firefox,
+            capabilities: "".to_string(),
+            enabled: true,
+            index: 1,
+            url,
+            window_handle,
+        }
+    }
 }
 
 
@@ -52,5 +68,19 @@ mod tests {
             serde_json::from_str(generated_statement).unwrap(),
             serde_json::from_str(expected_result).unwrap()
         );
+    }
+
+    #[test]
+    fn can_be_instantiated_from_a_url() {
+        let url = "http://juice-shop.herokuapp.com".to_string();
+        let statement = ClientLaunchStatement::from_url(url.clone());
+
+        assert_eq!(statement.browser_type, BrowserType::Firefox);
+        assert_eq!(statement.enabled, true);
+        assert_eq!(statement.index, 1);
+        assert_eq!(statement.capabilities, "".to_string());
+        assert_eq!(statement.url, url);
+        // Then, the `window_handle` is randomly generated.
+        assert_ne!(statement.window_handle, "".to_string());
     }
 }
