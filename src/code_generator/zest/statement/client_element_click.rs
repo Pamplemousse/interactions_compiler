@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::code_generator::zest::statement::selector::Selector;
 
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Debug, Serialize, PartialEq)]
 #[serde(rename_all="camelCase")]
 pub struct ClientElementClickStatement {
     pub index: usize,

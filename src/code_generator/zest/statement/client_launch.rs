@@ -2,7 +2,7 @@ use serde::Serialize;
 use uuid::Uuid;
 
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Debug, PartialEq, Serialize)]
 #[serde(rename_all="camelCase")]
 pub struct ClientLaunchStatement {
     pub browser_type: BrowserType,

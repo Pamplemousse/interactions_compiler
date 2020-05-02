@@ -4,7 +4,7 @@ pub mod css_selector;
 use css_selector::CssSelector;
 
 
-#[derive(Clone, Serialize)]
+#[derive(Clone, Debug, Serialize, PartialEq)]
 #[serde(rename_all="camelCase")]
 #[serde(tag="type")]
 pub enum Selector {
