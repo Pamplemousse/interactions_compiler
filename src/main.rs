@@ -1,6 +1,7 @@
-use std::io;
+use std::io::{self, BufRead, BufReader, Write};
+use std::fs::File;
 
-use clap::{App, crate_authors, crate_name, crate_description, crate_version, load_yaml};
+use clap::{ArgMatches, App, crate_authors, crate_name, crate_description, crate_version, load_yaml};
 
 mod code_generator;
 mod html;
@@ -18,17 +19,40 @@ fn main() -> Result<(), io::Error> {
         .version(crate_version!())
         .get_matches();
 
-    let url = matches.value_of("url")
-        // `url` is a required parameter.
-        .unwrap()
-        .to_string();
-
-    let stdin = io::stdin();
+    let (input, mut output, url) = get_arguments(&matches)?;
 
     let interaction_events: &Vec<InteractionEvent> =
-        &serde_json::from_reader(stdin).expect("JSON was not well-formatted");
+        &serde_json::from_reader(input).expect("JSON was not well-formatted");
 
-    println!("{}", generate_zest_code_from(interaction_events, url)?);
+    let result = generate_zest_code_from(interaction_events, url.to_string())?;
 
-    Ok(())
+    output.write_all(result.as_bytes())
+}
+
+type ArgumentsTuple<'a> = (Box<dyn BufRead>, Box<dyn Write>, &'a str);
+fn get_arguments<'a>(matches: &'a ArgMatches<'a>) -> Result<ArgumentsTuple<'a>, io::Error> {
+    let input = get_input((*matches).value_of("input"))?;
+    let output = get_output((*matches).value_of("output"))?;
+    let url = (*matches).value_of("url")
+        .unwrap_or_else(|| panic!("Expected `url` to be a required parameter."));
+
+    Ok((
+        input,
+        output,
+        url,
+    ))
+}
+
+fn get_input(input_match: Option<&str>) -> Result<Box<dyn BufRead>, io::Error> {
+    Ok(match input_match {
+        Some(filename) => Box::new(BufReader::new(File::open(filename)?)),
+        None => Box::new(BufReader::new(io::stdin())),
+    })
+}
+
+fn get_output(output_match: Option<&str>) -> Result<Box<dyn Write>, io::Error> {
+    Ok(match output_match {
+        Some(filename) => Box::new(File::create(filename)?),
+        None => Box::new(io::stdout()),
+    })
 }

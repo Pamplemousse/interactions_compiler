@@ -1,6 +1,18 @@
 # Require a `name` as per https://github.com/clap-rs/clap/issues/1338 .
 name: ""
 args:
+    - input:
+        help: Sets the input file to write the result; Defaults to STDIN.
+        short: i
+        long: input
+        value_name: INPUT
+        takes_value: true
+    - output:
+        help: Sets the output file to write the result; Defaults to STDOUT.
+        short: o
+        long: output
+        value_name: OUTPUT
+        takes_value: true
     - url:
         help: The URL of the website the trace has been recorded on.
         short: u
