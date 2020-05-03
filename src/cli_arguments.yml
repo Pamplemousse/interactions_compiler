@@ -13,6 +13,11 @@ args:
         long: output
         value_name: OUTPUT
         takes_value: true
+    - pretty:
+        help: Pretty print the result.
+        short: p
+        long: pretty
+        takes_value: false
     - url:
         help: The URL of the website the trace has been recorded on.
         short: u

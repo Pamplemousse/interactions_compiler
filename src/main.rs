@@ -8,6 +8,7 @@ mod html;
 mod interaction_event;
 use interaction_event::InteractionEvent;
 use code_generator::generate_zest_code_from;
+use code_generator::zest::Script;
 
 
 fn main() -> Result<(), io::Error> {
@@ -19,26 +20,30 @@ fn main() -> Result<(), io::Error> {
         .version(crate_version!())
         .get_matches();
 
-    let (input, mut output, url) = get_arguments(&matches)?;
+    let (input, mut output, pretty, url) = get_arguments(&matches)?;
 
     let interaction_events: &Vec<InteractionEvent> =
         &serde_json::from_reader(input).expect("JSON was not well-formatted");
 
-    let result = generate_zest_code_from(interaction_events, url.to_string())?;
+    let write: &dyn Fn(&Script) -> Result<String, serde_json::error::Error> =
+        if pretty { &serde_json::to_string_pretty } else { &serde_json::to_string };
+    let result = generate_zest_code_from(interaction_events, url.to_string(), write)?;
 
     output.write_all(result.as_bytes())
 }
 
-type ArgumentsTuple<'a> = (Box<dyn BufRead>, Box<dyn Write>, &'a str);
+type ArgumentsTuple<'a> = (Box<dyn BufRead>, Box<dyn Write>, bool, &'a str);
 fn get_arguments<'a>(matches: &'a ArgMatches<'a>) -> Result<ArgumentsTuple<'a>, io::Error> {
     let input = get_input((*matches).value_of("input"))?;
     let output = get_output((*matches).value_of("output"))?;
+    let pretty = (*matches).is_present("pretty");
     let url = (*matches).value_of("url")
         .unwrap_or_else(|| panic!("Expected `url` to be a required parameter."));
 
     Ok((
         input,
         output,
+        pretty,
         url,
     ))
 }
