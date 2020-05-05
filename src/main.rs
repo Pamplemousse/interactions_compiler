@@ -22,12 +22,13 @@ fn main() -> Result<(), io::Error> {
 
     let (input, mut output, pretty, url) = get_arguments(&matches)?;
 
-    let interaction_events: &Vec<InteractionEvent> =
-        &serde_json::from_reader(input).expect("JSON was not well-formatted");
+    let mut interaction_events: Vec<InteractionEvent> =
+        serde_json::from_reader(input).expect("JSON was not well-formatted");
+    (*interaction_events).sort_by(|a, b| a.timestamp.cmp(&b.timestamp));
 
     let write: &dyn Fn(&Script) -> Result<String, serde_json::error::Error> =
         if pretty { &serde_json::to_string_pretty } else { &serde_json::to_string };
-    let result = generate_zest_code_from(interaction_events, url.to_string(), write)?;
+    let result = generate_zest_code_from(&interaction_events, url.to_string(), write)?;
 
     output.write_all(result.as_bytes())
 }
