@@ -8,7 +8,7 @@ After recording user interactions in a webpage, generate a script to drive a pro
 
 ## Use
 
-```
+```json
 cat <<__EOF__ > test.json
 [ { "topic": "dom-events"
   , "element":
@@ -33,3 +33,8 @@ __EOF__
 
 test.json | cargo run -- -u https://website.com
 ```
+
+
+## Contribute
+
+  * Run the tests: `cargo test`.
