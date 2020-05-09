@@ -18,6 +18,16 @@ args:
         short: p
         long: pretty
         takes_value: false
+    - strategies:
+        help: |
+          Strategies to filter the given list of interaction events.
+          `squash_double_click` Only keeps the latest click event of a sequence of "close" (less than a second) clicks.
+        short: s
+        long: strategies
+        multiple: true
+        takes_value: true
+        possible_values:
+            - squash_double_clicks
     - url:
         help: The URL of the website the trace has been recorded on.
         short: u

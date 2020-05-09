@@ -3,6 +3,7 @@ use std::fmt::{Debug, Display, Formatter, Error};
 use serde::Deserialize;
 
 pub mod dom_interaction;
+pub mod simplifier;
 use dom_interaction::DomInteraction;
 
 
