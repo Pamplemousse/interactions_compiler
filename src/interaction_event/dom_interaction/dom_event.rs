@@ -3,7 +3,7 @@ use std::fmt::{Debug, Display, Formatter, Error};
 use serde::Deserialize;
 
 
-#[derive(Deserialize, PartialEq)]
+#[derive(Clone, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum DomEvent {
     CLICK,

@@ -8,10 +8,19 @@ pub use dom_element::DomElement;
 use dom_event::DomEvent;
 
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct DomInteraction {
     pub element: DomElement,
     pub event: DomEvent,
+}
+
+impl DomInteraction {
+    pub fn is_click(&self) -> bool {
+        match self.event {
+            DomEvent::CLICK => true,
+            _ => false,
+        }
+    }
 }
 
 

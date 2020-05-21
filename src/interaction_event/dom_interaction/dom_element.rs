@@ -5,7 +5,7 @@ use serde::{Deserialize, Deserializer};
 use crate::html::tag::Tag;
 
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct DomElement {
     #[serde(alias="className", deserialize_with="deserialize_classes")]
     pub classes: Vec<String>,

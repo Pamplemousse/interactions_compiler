@@ -7,18 +7,28 @@ pub mod simplifier;
 use dom_interaction::DomInteraction;
 
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 pub struct InteractionEvent {
     #[serde(flatten)]
     pub interaction: Interaction,
     pub timestamp: u64,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 #[serde(tag="topic")]
 pub enum Interaction {
     #[serde(rename="dom-events")]
     DomInteraction(DomInteraction)
+    // #[serde(rename="storage")]
+    // StorageInteraction(StorageInteraction)
+}
+
+impl InteractionEvent {
+    /// Two interactions events are said similars if at least their `interaction` field are equal;
+    /// Or, in other words, only if their `timestamp` fields differ.
+    pub fn similar(&self, other: &Self) -> bool {
+        self.interaction == other.interaction
+    }
 }
 
 impl Display for InteractionEvent {

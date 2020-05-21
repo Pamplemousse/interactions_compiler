@@ -1,3 +1,6 @@
+#[macro_use]
+extern crate lazy_static;
+
 use std::io::{self, BufRead, BufReader, Write};
 use std::fs::File;
 use std::str::FromStr;
@@ -23,13 +26,13 @@ fn main() -> Result<(), io::Error> {
         .version(crate_version!())
         .get_matches();
 
-    let (input, mut output, pretty, strategies, url) = get_arguments(&matches)?;
+    let (input, mut output, pretty, mut strategies, url) = get_arguments(&matches)?;
 
     let mut interaction_events: Vec<InteractionEvent> =
         serde_json::from_reader(input).expect("JSON was not well-formatted");
     (*interaction_events).sort_by(|a, b| a.timestamp.cmp(&b.timestamp));
 
-    simplify(&interaction_events, &strategies);
+    simplify(&interaction_events, &mut strategies);
 
     let write: &dyn Fn(&Script) -> Result<String, serde_json::error::Error> =
         if pretty { &serde_json::to_string_pretty } else { &serde_json::to_string };
@@ -38,7 +41,7 @@ fn main() -> Result<(), io::Error> {
     output.write_all(result.as_bytes())
 }
 
-type ArgumentsTuple<'a> = (Box<dyn BufRead>, Box<dyn Write>, bool, Vec<Strategy>, &'a str);
+type ArgumentsTuple<'a> = (Box<dyn BufRead>, Box<dyn Write>, bool, Vec<Strategy<'a>>, &'a str);
 fn get_arguments<'a>(matches: &'a ArgMatches<'a>) -> Result<ArgumentsTuple<'a>, io::Error> {
     let input = get_input((*matches).value_of("input"))?;
     let output = get_output((*matches).value_of("output"))?;
