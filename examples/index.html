@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>hello-wasm example</title>
+    <h1>recorded events</h1>
+    <textarea id="record" rows=20 cols=80>
+        [ { "topic": "dom-events"
+          , "element":
+            { "nodeName": "DIV"
+            , "className": "class1 class2"
+            , "id": "an-id"
+            }
+          , "event": "click"
+          , "timestamp": 1586991500209
+          }
+        , { "topic": "dom-events"
+          , "element":
+            { "nodeName": "INPUT"
+            , "className": "class3 class4"
+            , "id": "email"
+            }
+          , "event": "keydown"
+          , "timestamp": 1586991504673
+          }
+        ]
+    </textarea>
+    <h1>corresponding Zest script</h1>
+    <div id="zest" style="white-space: pre-wrap"></div>
+  </head>
+  <body>
+    <script type="module">
+      import init, { zest_from } from "../pkg/interactions_compiler.js";
+
+      init().then(() => {
+        updateZest(
+          document.getElementById("record").textContent,
+        );
+
+        document.getElementById("record").oninput = ((input) => {
+          const record = input.target.value;
+          updateZest(record);
+        });
+      });
+
+      function updateZest(record) {
+        const zestScript = zest_from(
+          record,
+          document.domain,
+          true,
+        );
+
+        document.getElementById("zest").innerHTML = zestScript;
+      }
+    </script>
+  </body>
+</html>
+

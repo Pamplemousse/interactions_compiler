@@ -3,14 +3,6 @@ use std::fs::File;
 
 use clap::{ArgMatches, App, crate_authors, crate_name, crate_description, crate_version, load_yaml};
 
-mod code_generator;
-mod html;
-mod interaction_event;
-use interaction_event::InteractionEvent;
-use code_generator::generate_zest_code_from;
-use code_generator::zest::Script;
-
-
 fn main() -> Result<(), io::Error> {
     let yaml = load_yaml!("cli_arguments.yml");
     let matches = App::from_yaml(yaml)
@@ -22,15 +14,13 @@ fn main() -> Result<(), io::Error> {
 
     let (input, mut output, pretty, url) = get_arguments(&matches)?;
 
-    let mut interaction_events: Vec<InteractionEvent> =
-        serde_json::from_reader(input).expect("JSON was not well-formatted");
-    (*interaction_events).sort_by(|a, b| a.timestamp.cmp(&b.timestamp));
+    let result = interactions_compiler::compile(
+        interactions_compiler::Input::BufRead(input),
+        url,
+        pretty,
+    );
 
-    let write: &dyn Fn(&Script) -> Result<String, serde_json::error::Error> =
-        if pretty { &serde_json::to_string_pretty } else { &serde_json::to_string };
-    let result = generate_zest_code_from(&interaction_events, url.to_string(), write)?;
-
-    output.write_all(result.as_bytes())
+    output.write_all(result?.as_bytes())
 }
 
 type ArgumentsTuple<'a> = (Box<dyn BufRead>, Box<dyn Write>, bool, &'a str);
