@@ -21,7 +21,7 @@ pub enum BrowserType {
 
 impl ClientLaunchStatement {
     pub fn from_url(url: String) -> Self {
-        let window_handle = Uuid::new_v4().to_hyphenated().to_string();
+        let window_handle = Uuid::new_v4().hyphenated().to_string();
 
         Self {
             browser_type: BrowserType::Firefox,
